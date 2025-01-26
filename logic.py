@@ -9,6 +9,11 @@ class Pokemon:
         self.pokemon_trainer = pokemon_trainer   
 
         self.pokemon_number = randint(1,1000)
+        self.health = randint(50, 100)
+        self.strength = randint(30, 200)
+        self.level = randint(1, 10)
+        self.hunger = randint(1, 90)
+        self.thirst = randint(1, 90)
         self.img = self.get_img()
         self.name = self.get_name()
         self.ability = self.get_ability()
@@ -47,7 +52,7 @@ class Pokemon:
 
     # Метод класса для получения информации
     def info(self):
-        return f"Имя твоего покеомона: {self.name} Способности: {self.ability}"
+        return f"Имя твоего покемона: {self.name}, Способности: {self.ability}, Сила: {self.strength}, Здоровье: {self.health}, Уровень: {self.level}, Голод: {self.hunger}, Жажда: {self.thirst}"
     
     # Метод класса для получения картинки покемона
     def show_img(self):
