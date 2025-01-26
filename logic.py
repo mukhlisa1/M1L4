@@ -52,7 +52,7 @@ class Pokemon:
 
     # Метод класса для получения информации
     def info(self):
-        return f"Имя твоего покемона: {self.name}, Способности: {self.ability}, Сила: {self.strength}, Здоровье: {self.health}, Уровень: {self.level}, Голод: {self.hunger}, Жажда: {self.thirst}"
+        return f"Имя твоего покемона: {self.name},\n Способности: {self.ability},\n Сила: {self.strength},\n Здоровье: {self.health},\n Уровень: {self.level},\n Голод: {self.hunger},\n Жажда: {self.thirst}"
     
     # Метод класса для получения картинки покемона
     def show_img(self):
