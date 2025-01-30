@@ -48,6 +48,39 @@ class Pokemon:
             return [ability['ability']['name'] for ability in data['abilities']]
         else:
             return "Pikachu"
+        
+    def attack(self, enemy):
+
+        temp = ''
+        
+        if isinstance(self, Wizard):
+            if randint(1,5) == 1:
+                temp += f'{self.name} применил щит\n'
+            else:
+                self.health -= enemy.strength
+        else:
+            self.health -= enemy.strength
+
+        if isinstance(enemy, Wizard):
+            if randint(1,5) == 1:
+                temp += f'{enemy.name} применил щит\n'
+            else:
+                enemy.health -= self.strength
+        else:
+            self.health -= enemy.strength
+
+        if self.health <= 0 and enemy.health <= 0:
+            return f"Ничья!"
+        elif self.health <= 0:
+            return f"{self.pokemon_trainer} победил!"
+        elif enemy.health <= 0:
+            return f"{enemy.pokemon_trainer} победил!"
+        else:
+            return f'''
+    Сражение состоялось:
+    {self.name} HP: {self.health}
+    {enemy.name} HP: {enemy.health}
+    '''
 
 
     # Метод класса для получения информации
@@ -57,4 +90,17 @@ class Pokemon:
     # Метод класса для получения картинки покемона
     def show_img(self):
         return self.img
+
+class Wizard(Pokemon):
+    pass
+
+
+class Fighter(Pokemon):
+
+    def attack(self, enemy):
+        super_power = randint(5, 15)
+        self.strength += super_power
+        result = super().attack(enemy)
+        self.strength -= super_power
+        return result + f"\nБоец применил супер-атаку силой:{super_power} "
 
