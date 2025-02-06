@@ -1,5 +1,6 @@
 from random import randint
 import requests
+from datetime import datetime, timedelta
 
 class Pokemon:
     pokemons = {}
@@ -14,9 +15,11 @@ class Pokemon:
         self.level = randint(1, 10)
         self.hunger = randint(1, 90)
         self.thirst = randint(1, 90)
+        self.role = "Обычный"
         self.img = self.get_img()
         self.name = self.get_name()
         self.ability = self.get_ability()
+        self.last_feed_time = datetime.now()
 
         Pokemon.pokemons[pokemon_trainer] = self
 
@@ -49,21 +52,57 @@ class Pokemon:
         else:
             return "Pikachu"
         
+    def feed(self, feed_interval = 20, hp_increase = 10 ):
+        current_time = datetime.now()  
+        delta_time = timedelta(minutes=feed_interval)  
+        if (current_time - self.last_feed_time) > delta_time:
+            self.health += hp_increase
+            self.last_feed_time = current_time
+            return f"Здоровье покемона увеличено. Текущее здоровье: {self.health}"
+        else:
+            return f"Следующее время кормления покемона: {current_time+delta_time}"  
+        
     def attack(self, enemy):
 
         temp = ''
+
+        if isinstance(self, Archer):
+            if randint(1, 4) == 1:
+                temp += f'{self.name} совершил критический выстрел!\n'
+                enemy.health -= self.strength * 2
+            elif randint(1, 5) == 1:
+                temp += f'{self.name} увернулся от атаки!\n'
+            else:
+                self.health -= enemy.strength
+
+        if isinstance(enemy, Archer):
+            if randint(1, 4) == 1:
+                temp += f'{enemy.name} совершил критический выстрел!\n'
+                self.health -= enemy.strength * 2
+            elif randint(1, 5) == 1:
+                temp += f'{enemy.name} увернулся от атаки!\n'
+            else:
+                enemy.health -= self.strength
         
         if isinstance(self, Wizard):
             if randint(1,5) == 1:
                 temp += f'{self.name} применил щит\n'
+            elif randint(1,5) == 2:
+                heal_amount = randint(1, 10)
+                self.health += heal_amount
+                temp += f'{self.name} применил исцеление\n'
             else:
                 self.health -= enemy.strength
         else:
-            self.health -= enemy.strength
+            enemy.health -= self.strength
 
         if isinstance(enemy, Wizard):
             if randint(1,5) == 1:
                 temp += f'{enemy.name} применил щит\n'
+            elif randint(1,5) == 2:
+                heal_amount = randint(1, 10)
+                enemy.health += heal_amount
+                temp += f'{enemy.name} применил исцеление\n'
             else:
                 enemy.health -= self.strength
         else:
@@ -85,17 +124,24 @@ class Pokemon:
 
     # Метод класса для получения информации
     def info(self):
-        return f"Имя твоего покемона: {self.name},\n Способности: {self.ability},\n Сила: {self.strength},\n Здоровье: {self.health},\n Уровень: {self.level},\n Голод: {self.hunger},\n Жажда: {self.thirst}"
+        return f"Имя твоего покемона: {self.name},\n Роль: {self.role},\n Способности: {self.ability},\n Сила: {self.strength},\n Здоровье: {self.health},\n Уровень: {self.level},\n Голод: {self.hunger},\n Жажда: {self.thirst}"
     
     # Метод класса для получения картинки покемона
     def show_img(self):
         return self.img
 
 class Wizard(Pokemon):
-    pass
+
+    def __init__(self, name):
+        super().__init__(name)
+        self.role = "Волшебник"
 
 
 class Fighter(Pokemon):
+
+    def __init__(self, name):
+        super().__init__(name)
+        self.role = "Боец"
 
     def attack(self, enemy):
         super_power = randint(5, 15)
@@ -103,4 +149,9 @@ class Fighter(Pokemon):
         result = super().attack(enemy)
         self.strength -= super_power
         return result + f"\nБоец применил супер-атаку силой:{super_power} "
+    
+class Archer(Pokemon):
+    def __init__(self, name):
+        super().__init__(name)
+        self.role = "Лучник"
 

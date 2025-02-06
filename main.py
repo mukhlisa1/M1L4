@@ -1,7 +1,7 @@
 import telebot 
 from config import token
 
-from logic import Pokemon, Wizard, Fighter
+from logic import Pokemon, Wizard, Fighter, Archer
 import random
 
 bot = telebot.TeleBot(token) 
@@ -9,11 +9,13 @@ bot = telebot.TeleBot(token)
 @bot.message_handler(commands=['go'])
 def go(message):
     if message.from_user.username not in Pokemon.pokemons.keys():
-        chance = random.randint(1, 3)
+        chance = random.randint(1, 4)
         if chance == 1:
             pokemon = Pokemon(message.from_user.username)
         elif chance == 2:
             pokemon = Wizard(message.from_user.username)
+        elif chance == 3:
+            pokemon = Archer(message.from_user.username)
         else:
             pokemon = Fighter(message.from_user.username)
         
@@ -34,9 +36,11 @@ def info(message):
 @bot.message_handler(commands=['feed'])
 def feed(message):
     if message.from_user.username in Pokemon.pokemons:
+        pok = Pokemon.pokemons[message.from_user.username]
+        next_time_feed = pok.feed()
         Pokemon.pokemons[message.from_user.username].health += random.randint(5, 20)
         Pokemon.pokemons[message.from_user.username].hunger -= random.randint(10, 70)
-        bot.reply_to(message, "Ты покормил своего покемона. Здоровье увеличилось!")
+        bot.send_message(message.chat.id, f"Ты покормил покемона. {next_time_feed}")
 
 @bot.message_handler(commands=['drink'])
 def drink(message):
